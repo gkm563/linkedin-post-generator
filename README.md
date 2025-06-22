@@ -22,19 +22,23 @@ This is a smart tool built using **HTML**, **CSS**, and **JavaScript** to auto-g
 - HTML
 - CSS
 - JavaScript
-## 📦 Folder Structure
+## Folder Structure
 
-📁 linkedin-post-generator
+## linkedin-post-generator
+
 ├── index.html
+
 ├── style.css
+
 ├── script.js
+
 └── README.md
 
 csharp
 Copy
 Edit
 
-## ✅ Demo Screenshot (Optional)
+## Demo Screenshot (Optional)
 ![image](https://github.com/user-attachments/assets/1f42ce5d-ec06-4c2d-a6fc-090506a93969)
 
 
