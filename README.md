@@ -27,8 +27,11 @@ This is a smart tool built using **HTML**, **CSS**, and **JavaScript** to auto-g
 ## linkedin-post-generator
 
 ├── index.html
+
 ├── style.css
+
 ├── script.js
+
 └── README.md
 
 csharp
