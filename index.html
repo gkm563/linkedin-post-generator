@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced LinkedIn Post Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #0073b1; /* LinkedIn Blue */
+            --primary-hover-color: #005f91;
+            --secondary-color: #28a745; /* Success Green */
+            --secondary-hover-color: #218838;
+            --background-light: #f0f2f5;
+            --background-white: #ffffff;
+            --text-dark: #333;
+            --text-light: #666;
+            --border-color: #ddd;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: var(--background-white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px var(--shadow-light);
+            width: 100%;
+            max-width: 900px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                grid-template-columns: 1fr 1.2fr; /* Two columns for larger screens */
+            }
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-weight: 700;
+            grid-column: 1 / -1; /* Span across all columns */
+        }
+
+        .input-section, .output-section {
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        select, input[type="number"], input[type="text"], textarea {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--text-dark);
+            background-color: #fcfcfc;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(0, 115, 177, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            max-height: 200px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex-grow: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button.generate-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        button.generate-btn:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+        }
+
+        button.copy-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            display: none; /* Hidden by default */
+        }
+
+        button.copy-btn:hover {
+            background-color: var(--secondary-hover-color);
+            transform: translateY(-2px);
+        }
+
+        .output-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 200px; /* Ensure space even when empty */
+        }
+
+        .output-section h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        #postContent {
+            white-space: pre-wrap; /* Preserves whitespace and wraps text */
+            word-wrap: break-word; /* Breaks long words */
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 6px;
+            min-height: 100px;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            overflow-y: auto; /* For long posts */
+            max-height: 300px;
+        }
+
+        .character-counter {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-align: right;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        .emoji-picker {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(30px, 1fr));
+            gap: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            background-color: #fcfcfc;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .emoji-picker span {
+            cursor: pointer;
+            font-size: 1.2rem;
+            text-align: center;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+
+        .emoji-picker span:hover {
+            background-color: var(--background-light);
+        }
+
+        /* Toast Notification */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+            box-shadow: 0 4px 8px var(--shadow-light);
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2><i class="fab fa-linkedin"></i> Advanced LinkedIn Post Generator</h2>
+
+        <div class="input-section">
+            <label for="prompt"><i class="fas fa-pencil-alt"></i> Enter your main idea/keywords:</label>
+            <textarea id="prompt" placeholder="E.g., Benefits of AI in marketing, new career path, leadership tips..."></textarea>
+            <div class="character-counter">
+                <span id="promptCharCount">0</span> characters
+            </div>
+
+            <label for="topic"><i class="fas fa-tag"></i> Select Primary Topic:</label>
+            <select id="topic">
+                <option value="technology">Technology & Innovation</option>
+                <option value="business">Business & Entrepreneurship</option>
+                <option value="career">Career & Personal Growth</option>
+                <option value="marketing">Marketing & Sales</option>
+                <option value="finance">Finance & Investment</option>
+                <option value="health">Health & Wellness</option>
+                <option value="education">Education & Learning</option>
+                <option value="sustainability">Sustainability & ESG</option>
+            </select>
+
+            <label for="tone"><i class="fas fa-bullhorn"></i> Select Tone:</label>
+            <select id="tone">
+                <option value="professional">Professional</option>
+                <option value="inspiring">Inspiring</option>
+                <option value="casual">Casual</option>
+                <option value="informative">Informative</option>
+                <option value="humorous">Humorous</option>
+            </select>
+
+            <label for="length"><i class="fas fa-text-width"></i> Post Length:</label>
+            <select id="length">
+                <option value="short">Short (~100-150 words)</option>
+                <option value="medium">Medium (~250-300 words)</option>
+                <option value="long">Long (~400-500+ words)</option>
+            </select>
+
+            <label for="hashtags"><i class="fas fa-hashtag"></i> Number of Hashtags:</label>
+            <input type="number" id="hashtags" min="0" max="10" value="5">
+
+            <label><i class="fas fa-smile"></i> Add Emojis:</label>
+            <div class="emoji-picker" id="emojiPicker">
+                <span>💡</span><span>🚀</span><span>📈</span><span>🔗</span><span>🔥</span>
+                <span>✨</span><span>✅</span><span>🌐</span><span>🌱</span><span>🤝</span>
+                <span>📚</span><span>💡</span><span>🌟</span><span>🎯</span><span>💬</span>
+            </div>
+            <input type="hidden" id="selectedEmojis">
+
+            <div class="button-group">
+                <button class="generate-btn" onclick="generatePost()"><i class="fas fa-magic"></i> Generate Post</button>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <h3><i class="fas fa-clipboard"></i> Generated Post Preview:</h3>
+            <div id="postContent">Your generated post will appear here.</div>
+            <div class="character-counter">
+                <span id="postCharCount">0</span> characters / <span id="postWordCount">0</span> words
+            </div>
+            <div class="button-group">
+                <button class="copy-btn" id="copyBtn" onclick="copyToClipboard()"><i class="fas fa-copy"></i> Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const promptInput = document.getElementById('prompt');
+        const promptCharCount = document.getElementById('promptCharCount');
+        const postContentDiv = document.getElementById('postContent');
+        const postCharCount = document.getElementById('postCharCount');
+        const postWordCount = document.getElementById('postWordCount');
+        const copyBtn = document.getElementById('copyBtn');
+        const emojiPicker = document.getElementById('emojiPicker');
+        const selectedEmojisInput = document.getElementById('selectedEmojis');
+        let selectedEmojis = []; // Store selected emojis
+
+        // --- Event Listeners ---
+        promptInput.addEventListener('input', updatePromptCharCount);
+        emojiPicker.addEventListener('click', handleEmojiSelection);
+
+        // --- Initialization ---
+        updatePostContentCounts(); // Initialize counts for the empty post content
+        selectedEmojisInput.value = ''; // Ensure hidden input is empty on load
+
+        // --- Functions ---
+
+        function updatePromptCharCount() {
+            promptCharCount.textContent = promptInput.value.length;
+        }
+
+        function updatePostContentCounts() {
+            const text = postContentDiv.textContent;
+            postCharCount.textContent = text.length;
+            postWordCount.textContent = text.split(/\s+/).filter(word => word.length > 0).length;
+            copyBtn.style.display = text.trim() === 'Your generated post will appear here.' || text.trim() === '' ? 'none' : 'flex';
+        }
+
+        function handleEmojiSelection(event) {
+            if (event.target.tagName === 'SPAN') {
+                const emoji = event.target.textContent;
+                const index = selectedEmojis.indexOf(emoji);
+                if (index > -1) {
+                    selectedEmojis.splice(index, 1); // Remove if already selected
+                    event.target.style.backgroundColor = ''; // Reset background
+                } else {
+                    selectedEmojis.push(emoji); // Add if not selected
+                    event.target.style.backgroundColor = 'var(--background-light)'; // Highlight
+                }
+                selectedEmojisInput.value = selectedEmojis.join('');
+            }
+        }
+
+        function generatePost() {
+            const topic = document.getElementById('topic').value;
+            const length = document.getElementById('length').value;
+            const hashtagCount = Math.min(Math.max(parseInt(document.getElementById('hashtags').value, 10) || 0, 0), 10);
+            const prompt = promptInput.value.trim();
+            const tone = document.getElementById('tone').value;
+
+            // Basic content generation logic (can be expanded significantly with more data/AI)
+            let generatedText = '';
+            let baseContent = '';
+
+            const baseTopics = {
+                technology: "The rapid advancements in technology are reshaping industries.",
+                business: "Navigating the dynamic landscape of modern business requires agility.",
+                career: "Unlocking your full career potential involves continuous learning and adaptation.",
+                marketing: "Effective marketing strategies are crucial for connecting with your audience.",
+                finance: "Understanding financial trends is key to smart investment decisions.",
+                health: "Prioritizing well-being is fundamental for a productive and fulfilling life.",
+                education: "Lifelong learning is paramount in an ever-evolving world.",
+                sustainability: "Embracing sustainable practices benefits both business and the planet."
+            };
+
+            const toneModifiers = {
+                professional: (text) => `${text} Focus on data-driven insights and strategic execution.`,
+                inspiring: (text) => `Discover the power within! ${text} Embrace challenges as opportunities.`,
+                casual: (text) => `Hey everyone! Just a quick thought: ${text} What are your views?`,
+                informative: (text) => `Did you know? ${text} Here's a breakdown of the key facts.`,
+                humorous: (text) => `Let's add some fun to the mix! ${text} (Warning: may contain puns!)`
+            };
+
+            if (prompt) {
+                baseContent = `Exploring the idea of "${prompt}". ${baseTopics[topic]}`;
+            } else {
+                baseContent = baseTopics[topic];
+            }
+
+            generatedText = toneModifiers[tone](baseContent);
+
+            // Adjust length
+            if (length === 'short') {
+                generatedText = generatedText.substring(0, Math.min(generatedText.length, 150));
+            } else if (length === 'medium') {
+                generatedText += ` This involves understanding key principles and applying them practically. It's about taking concrete steps towards your goals.`;
+                generatedText = generatedText.substring(0, Math.min(generatedText.length, 350));
+            } else if (length === 'long') {
+                generatedText += ` This involves understanding key principles and applying them practically. It's about taking concrete steps towards your goals. Delving deeper, we can explore various methodologies and case studies that highlight successful implementations. Let's foster a community of continuous learning and shared insights.`;
+            }
+
+            // Add emojis
+            if (selectedEmojis.length > 0) {
+                generatedText += ` ${selectedEmojis.join('')}`;
+            }
+
+            // Add hashtags
+            const hashtagOptions = {
+                technology: ["#TechTrends", "#Innovation", "#AI", "#DigitalTransformation", "#FutureTech", "#SoftwareDevelopment", "#BigData", "#CyberSecurity", "#CloudComputing", "#IoT"],
+                business: ["#BusinessGrowth", "#Entrepreneurship", "#Leadership", "#BusinessStrategy", "#SuccessMindset", "#Startups", "#SMB", "#CorporateStrategy", "#InnovationHub", "#MarketTrends"],
+                career: ["#CareerDevelopment", "#PersonalGrowth", "#SelfImprovement", "#JobSearch", "#LinkedInTips", "#SkillsDevelopment", "#Mentorship", "#WorkLifeBalance", "#ProfessionalDevelopment", "#CareerGoals"],
+                marketing: ["#DigitalMarketing", "#SocialMediaMarketing", "#ContentMarketing", "#SEO", "#Branding", "#MarketingStrategy", "#InfluencerMarketing", "#EmailMarketing", "#LeadGeneration", "#MarketingTips"],
+                finance: ["#Investments", "#FinancialLiteracy", "#WealthManagement", "#StockMarket", "#PersonalFinance", "#Economy", "#FinTech", "#FinancialPlanning", "#Crypto", "#Banking"],
+                health: ["#Wellbeing", "#MentalHealth", "#Fitness", "#HealthyLiving", "#Nutrition", "#Mindfulness", "#SelfCare", "#WellnessJourney", "#HealthTech", "#PreventativeCare"],
+                education: ["#EdTech", "#LifelongLearning", "#SkillUp", "#HigherEd", "#OnlineLearning", "#EducationReform", "#LearningAndDevelopment", "#FutureOfWork", "#KnowledgeSharing", "#StudentSuccess"],
+                sustainability: ["#ESG", "#GreenBusiness", "#ClimateAction", "#CircularEconomy", "#RenewableEnergy", "#SocialImpact", "#EcoFriendly", "#SustainableDevelopment", "#CSR", "#NetZero"]
+            };
+
+            let hashtags = [];
+            if (hashtagCount > 0) {
+                // Combine general and topic-specific hashtags for variety
+                let relevantHashtags = hashtagOptions[topic] || [];
+                // Shuffle and pick
+                relevantHashtags = relevantHashtags.sort(() => 0.5 - Math.random()).slice(0, hashtagCount);
+                hashtags = relevantHashtags.map(tag => tag);
+            }
+            if (hashtags.length > 0) {
+                generatedText += `\n\n${hashtags.join(" ")}`;
+            }
+
+            postContentDiv.textContent = generatedText.trim();
+            updatePostContentCounts();
+            showToast("Post generated successfully!");
+        }
+
+        function copyToClipboard() {
+            const postContent = document.getElementById('postContent').textContent;
+            if (postContent.trim() === 'Your generated post will appear here.' || postContent.trim() === '') {
+                showToast("Nothing to copy!", false);
+                return;
+            }
+
+            navigator.clipboard.writeText(postContent).then(() => {
+                showToast("Post copied to clipboard!");
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                showToast("Failed to copy post!", false);
+            });
+        }
+
+        function showToast(message, success = true) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.className = "toast show";
+            toast.style.backgroundColor = success ? "#28a745" : "#dc3545"; // Green for success, red for error
+            setTimeout(() => {
+                toast.className = toast.className.replace("show", "");
+            }, 3000); // 3 seconds
+        }
+    </script>
+</body>
+</html>
